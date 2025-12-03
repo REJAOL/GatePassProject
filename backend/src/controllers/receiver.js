@@ -1,5 +1,5 @@
 
-const Reciever = require("../models/Reciever.model.js")
+const Reciever = require("../models/Receiver.model.js")
 
 const create = async(req,res)=>{
     const {name,phone} = req.body 

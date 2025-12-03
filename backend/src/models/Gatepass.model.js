@@ -1,5 +1,28 @@
 const  mongoose = require("mongoose");
 
+const itemSchema = new mongoose.Schema({
+        name:{
+            type:String,
+            required:true,
+            trim:true 
+        },
+        quantity:{
+            type:String,
+            required:true,
+        },
+        unit:{
+            type:String,
+            required:true
+        },
+        comments:{
+            type:String,
+            trim:true
+        }
+})
+
+
+
+
 
 const gatePassSchema = new mongoose.Schema({
 
@@ -12,7 +35,7 @@ const gatePassSchema = new mongoose.Schema({
     },
     receiver:{
             type:mongoose.Schema.Types.ObjectId,
-            ref:'Reciever',
+            ref:'Receiver',
             required:true
     },
     dispatchFrom:{
@@ -36,6 +59,11 @@ const gatePassSchema = new mongoose.Schema({
             ref:'User',
             required:true,
         },
+    },
+    items:[itemSchema],
+    remarks:{
+        type:String,
+        default:""
     },
     date:{
         type:Date,
