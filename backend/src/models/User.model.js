@@ -9,21 +9,20 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:true 
     },
-    // Designation:{
-    //     type:String,
-    //     required:true
-    // },
-    // Employee_id:{
-    //     type:Number,
-    //     required:true 
-    // },
-    // Department:{
-    //     type:String,
-    //     required:true
-    // },
+    designation:{
+        type:String,
+        required:true 
+    },
+    employee_id:{
+        type:Number,
+        required:true 
+    },
+    department:{
+        type:String,
+        required:true 
+    },
     // password:{
     //     type:String,
-    //     require:true
     // }
 })
 
