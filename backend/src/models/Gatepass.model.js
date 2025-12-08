@@ -27,11 +27,9 @@ const itemSchema = new mongoose.Schema({
 const gatePassSchema = new mongoose.Schema({
 
     sender:{
-        user:{
             type:mongoose.Schema.Types.ObjectId,
-            ref:'User',
+            ref:'Sender',
             required:true,
-        },
     },
     receiver:{
             type:mongoose.Schema.Types.ObjectId,
@@ -39,26 +37,36 @@ const gatePassSchema = new mongoose.Schema({
             required:true
     },
     dispatchFrom:{
-        address:{
             type:mongoose.Schema.Types.ObjectId,
             ref:'Address',
             required:true 
-        }
-
     },
     dispatchTo:{
-        address:{
             type:mongoose.Schema.Types.ObjectId,
             ref:'Address',
             required:true 
-        }
     },
     preparedBy:{
-        user:{
-            type:mongoose.Schema.Types.ObjectId,
-            ref:'User',
-            required:true,
-        },
+            name:{
+                type:String,
+                required:true
+            },
+            phone:{
+                type:String,
+                required:true
+            },
+            designation:{
+                type:String,
+                default:""
+            },
+            employee_id:{
+                type:String,
+                default:""
+            },
+            department:{
+                type:String,
+                default:""
+            }
     },
     items:[itemSchema],
     remarks:{

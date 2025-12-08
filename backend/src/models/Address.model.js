@@ -1,7 +1,7 @@
 const  mongoose  = require("mongoose");
 
 const addressSchema = new mongoose.Schema({
-    location:{
+    hubName:{
         type:String,
         required:true 
     },
@@ -9,7 +9,17 @@ const addressSchema = new mongoose.Schema({
         type:String,
         required:true 
     },
+    contactPerson:{
+        type:String,
+        required:true 
+    },
+    phoneNumber:{
+        type:String,
+        required:true
+    }
 
+},{
+    timestamps:true
 })
 
 

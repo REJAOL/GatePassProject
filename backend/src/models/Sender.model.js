@@ -1,6 +1,6 @@
 const  mongoose  = require("mongoose");
 
-const receiverSchema = new mongoose.Schema({
+const senderSchema = new mongoose.Schema({
     name:{
         type:String,
         required:true 
@@ -9,20 +9,19 @@ const receiverSchema = new mongoose.Schema({
         type:String,
         required:true 
     },
-    Designation:{
+    designation:{
         type:String,
-        default:""
+        required:true,
     },
-    Employee_id:{
+    employee_id:{
         type:Number,
-        default:""
+        required:true,
     },
-    Department:{
+    department:{
         type:String,
-        default:""
-
+        required:true,
     },
 })
 
 
-module.exports = mongoose.model('Receiver',receiverSchema)
+module.exports = mongoose.model('Sender',senderSchema)

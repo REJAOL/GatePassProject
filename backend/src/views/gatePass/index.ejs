@@ -1,0 +1,162 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GatePass</title>
+
+</head>
+<body>
+    <h1>All Gatepass</h1>
+    <% gatepasses.forEach((gp,i)=>{ %>
+        <h1>
+            <%= gp.sender.name %>  -
+            <%= gp.dispatchFrom.hubName %> - 
+            <%= gp.dispatchTo.hubName %> -
+            <%= gp.receiver.name %>
+        </h1>
+    <%  })%>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>All Gate Passes</title>
+
+  <!-- Bootstrap 5 + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .page-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 2.5rem 0;
+      margin-bottom: 2rem;
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .card {
+      border: none;
+      border-radius: 16px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+    .gatepass-icon {
+      font-size: 2.8rem;
+      color: #667eea;
+    }
+    .route-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .btn-add {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      font-size: 1.8rem;
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="page-header text-center">
+    <div class="container">
+      <h1 class="display-4 fw-bold">
+        All Gate Passes
+      </h1>
+      <p class="lead">Total Active Passes: <strong><%= gatepasses.length %></strong></p>
+    </div>
+  </div>
+
+  <div class="container">
+    <% if (gatepasses.length === 0) { %>
+      <div class="text-center py-5">
+        <i class="bi bi-file-earmark-x display-1 text-muted"></i>
+        <h3 class="mt-4 text-muted">No gate passes created yet</h3>
+        <a href="/api/v1/gatepass/create" class="btn btn-primary btn-lg mt-3">
+          Create First Gate Pass
+        </a>
+      </div>
+    <% } else { %>
+      <div class="row g-4">
+        <% gatepasses.forEach((gp, i) => { %>
+          <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+              <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-3">
+                  <i class="bi bi-truck gatepass-icon me-3"></i>
+                  <h4 class="card-title mb-0 text-primary">#<%= i + 1 %></h4>
+                </div>
+
+                <!-- Main Route Line -->
+                <div class="route-text text-center py-3 px-2 bg-light rounded">
+                  <strong><%= gp.sender?.name || 'Unknown Sender' %></strong>
+                  <i class="bi bi-arrow-right mx-2 text-primary"></i>
+                  <strong><%= gp.dispatchFrom?.hubName || 'Unknown From' %></strong>
+                  <i class="bi bi-arrow-right mx-2 text-primary"></i>
+                  <strong><%= gp.dispatchTo?.hubName || 'Unknown To' %></strong>
+                  <i class="bi bi-arrow-right mx-2 text-primary"></i>
+                  <strong><%= gp.receiver?.name || 'Unknown Receiver' %></strong>
+                </div>
+
+                <div class="mt-3">
+                  <p class="mb-1">
+                    <i class="bi bi-person-badge-fill text-success"></i>
+                    <strong>Prepared by:</strong> <%= gp.preparedBy?.name || 'N/A' %>
+                  </p>
+                  <p class="mb-1">
+                    <i class="bi bi-calendar-check text-info"></i>
+                    <%= new Date(gp.date || gp.createdAt).toLocaleDateString('en-IN') %>
+                  </p>
+                  <% if (gp.remarks) { %>
+                    <p class="mb-0 mt-2 text-muted small">
+                      <i class="bi bi-chat-dots"></i> <%= gp.remarks %>
+                    </p>
+                  <% } %>
+                </div>
+              </div>
+
+              <div class="card-footer bg-transparent border-top">
+                <small class="text-muted">
+                  ID: <%= gp._id.toString().slice(-8) %>
+                </small>
+                <a href="/api/v1/gatepass/<%= gp._id %>" class="btn btn-sm btn-outline-primary float-end">
+                  View Details
+                </a>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Floating Add Button -->
+  <a href="/api/v1/gatepass/create" class="btn btn-primary btn-lg btn-add shadow-lg">
+    <i class="bi bi-plus"></i>
+  </a>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

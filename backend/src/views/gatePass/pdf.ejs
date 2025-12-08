@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gate Pass - Daraz</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', 'Tahoma', Arial, sans-serif;
+      font-size: 11px;
+      line-height: 1.3;
+      color: #000;
+      background: #fff;
+      margin: 0;
+      padding: 10mm;
+    }
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      box-sizing: border-box;
+      position: relative;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #000;
+      padding: 4px;
+      vertical-align: top;
+    }
+    th {
+      background: #f0f0f0;
+      font-weight: bold;
+    }
+    .logo {
+      height: 20px;
+    }
+    .gatepass-id {
+      text-align: right;
+      font-weight: bold;
+    }
+    .company-name {
+      text-align: center;
+      font-weight: bold;
+    }
+    .challan-type {
+      text-align: center;
+    }
+    .field-row {
+      margin: 2px 0;
+    }
+    .field-label {
+      font-weight: bold;
+    }
+    .items-table td, .items-table th {
+      text-align: left;
+    }
+    .serial-comments {
+      white-space: pre-wrap;
+      font-size: 10px;
+      margin-top: 5px;
+    }
+    .remarks-box {
+      border: 1px solid #000;
+      padding: 5px;
+      min-height: 50px;
+      margin-top: 10px;
+    }
+    .sign-table {
+      border: none;
+      width: 100%;
+    }
+    .sign-table td {
+      border: none;
+      border-top: 1px solid #000;
+      text-align: center;
+      padding-top: 4px;
+    }
+    .footer {
+      position: absolute;
+      bottom: 10mm;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 9px;
+      color: #555;
+      border-top: 1px solid #ccc;
+      padding-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <table>
+      <tr>
+        <td><img class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Daraz_logo.svg/1200px-Daraz_logo.svg.png" alt="Daraz"></td>
+        <td class="gatepass-id">GATE PASS#: BD-IT<%= new Date(gatepass.createdAt).toISOString().replace(/[-T:.Z]/g, '').slice(0,14) %></td>
+      </tr>
+      <tr>
+        <td colspan="2" class="company-name">Daraz Bangladesh Limited</td>
+      </tr>
+      <tr>
+        <td>Dispatch Date: <%= new Date(gatepass.date).toLocaleDateString('en-GB') %></td>
+        <td>Receiving Date:</td>
+      </tr>
+      <tr>
+        <td colspan="2" class="challan-type">Challan Type: Internal/External</td>
+      </tr>
+      <tr>
+        <th>Dispatch From</th>
+        <th>Dispatch To</th>
+      </tr>
+      <tr>
+        <td>
+          <div class="field-row"><span class="field-label">Name:</span> <%= gatepass.dispatchFrom.hubName || 'N/A' %></div>
+          <div class="field-row"><span class="field-label">Zone:</span> <%= gatepass.dispatchFrom.hubName || 'N/A' %></div>
+          <div class="field-row"><span class="field-label">Address:</span> <%= gatepass.dispatchFrom.details || 'N/A' %></div>
+        </td>
+        <td>
+          <div class="field-row"><span class="field-label">Name:</span> <%= gatepass.dispatchTo.hubName || 'N/A' %></div>
+          <div class="field-row"><span class="field-label">Zone:</span> <%= gatepass.dispatchTo.hubName || 'N/A' %></div>
+          <div class="field-row"><span class="field-label">Address:</span> <%= gatepass.dispatchTo.details || 'N/A' %></div>
+        </td>
+      </tr>
+      <tr>
+        <th>Sender's Details</th>
+        <th>Receiver's Details</th>
+      </tr>
+      <tr>
+        <td>
+          <div class="field-row"><span class="field-label">Name:</span> <%= gatepass.sender.name || 'N/A' %></div>
+          <div class="field-row"><span class="field-label">Phone No:</span> <%= gatepass.sender.phone || 'N/A' %></div>
+          <div class="field-row"><span class="field-label">Designation:</span> <%= gatepass.sender.designation || 'N/A' %></div>
+          <div class="field-row"><span class="field-label">Employee ID:</span> <%= gatepass.sender.employee_id || 'N/A' %></div>
+          <div class="field-row"><span class="field-label">Department:</span> <%= gatepass.sender.department || 'N/A' %></div>
+        </td>
+        <td>
+          <div class="field-row"><span class="field-label">Name:</span> <%= gatepass.receiver.name || 'N/A' %></div>
+          <div class="field-row"><span class="field-label">Phone No:</span> <%= gatepass.receiver.phone || 'N/A' %></div>
+          <div class="field-row"><span class="field-label">Designation:</span> <%= gatepass.receiver.designation || 'N/A' %></div>
+          <div class="field-row"><span class="field-label">Employee ID:</span> <%= gatepass.receiver.employee_id || 'N/A' %></div>
+          <div class="field-row"><span class="field-label">Department:</span> <%= gatepass.receiver.department || 'N/A' %></div>
+        </td>
+      </tr>
+    </table>
+
+    <table class="items-table" style="margin-top: 10px;">
+      <tr>
+        <th>SL NO</th>
+        <th>ITEM DESCRIPTION</th>
+        <th>UNIT</th>
+        <th>QUANTITY</th>
+      </tr>
+      <% let itemCount = gatepass.items.length; %>
+      <% gatepass.items.forEach((item, idx) => { %>
+        <tr>
+          <td><%= idx + 1 %></td>
+          <td><%= item.name || '' %></td>
+          <td><%= item.unit || '' %></td>
+          <td><%= item.quantity || '' %></td>
+        </tr>
+      <% }) %>
+      <% for (let i = itemCount; i < 5; i++) { %> <!-- Minimum 5 rows as in sample -->
+        <tr>
+          <td><%= i + 1 %></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      <% } %>
+    </table>
+
+    <!-- Serial comments below items -->
+    <div class="serial-comments">
+      <% gatepass.items.forEach(item => { %>
+        <%= item.comments || '' %>
+      <% }) %>
+    </div>
+
+    <!-- Bearer Details (kept blank for hand writing) -->
+    <div class="field-row" style="margin-top: 10px;"><span class="field-label">Bearer Details:</span></div>
+    <div class="field-row"><span class="field-label">Name:</span></div>
+    <div class="field-row"><span class="field-label">Phone No:</span></div>
+
+    <!-- Recipient Details -->
+    <div class="field-row" style="margin-top: 10px;"><span class="field-label">Recipient Details:</span></div>
+    <div class="field-row"><span class="field-label">Name:</span></div>
+    <div class="field-row"><span class="field-label">Phone No:</span> <%= gatepass.receiver.phone || '' %></div>
+
+    <!-- Prepared By -->
+    <div class="field-row" style="margin-top: 10px;"><span class="field-label">Name:</span> <%= gatepass.preparedBy.name || 'N/A' %></div>
+    <div class="field-row"><span class="field-label">Designation:</span> <%= gatepass.preparedBy.designation || 'N/A' %></div>
+    <div class="field-row"><span class="field-label">Employee ID:</span> <%= gatepass.preparedBy.employee_id || 'N/A' %></div>
+    <div class="field-row"><span class="field-label">Sign:</span> <%= gatepass.preparedBy.name || '' %></div>
+
+    <!-- Signatures -->
+    <table class="sign-table" style="margin-top: 20px;">
+      <tr>
+        <td>PREPARED BY</td>
+        <td>SECURITY CHECK</td>
+        <td>RECEIVED BY</td>
+      </tr>
+    </table>
+    <table class="sign-table">
+      <tr>
+        <td>BEARER SIGNATURE</td>
+        <td>AUTHORISED SIGNATURE</td>
+        <td></td> <!-- Blank for alignment -->
+      </tr>
+    </table>
+
+    <div class="footer">
+      Daraz Internal B2 DR-COMP-FRM-GPFRM &nbsp; 28th October, 2024 &nbsp; Version 1.1
+    </div>
+  </div>
+</body>
+</html>
