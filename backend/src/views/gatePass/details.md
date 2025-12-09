@@ -1,134 +1,135 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Gate Pass Details</title>
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-  <!-- jsPDF + AutoTable -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-
   <style>
-    body { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
-    .card { border: none; border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); margin-top: 50px; padding: 30px; }
-    .gatepass-icon { font-size: 3rem; color: #667eea; }
-    h5 { margin-top: 20px; }
-    ul { padding-left: 20px; }
+    body { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; font-family: 'Segoe UI', sans-serif; }
+    .page-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2.5rem 0; margin-bottom: 2rem; border-radius: 0 0 20px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+    .form-card { border: none; border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+    .item-row { background: #f8f9fa; border-radius: 12px; padding: 15px; margin-bottom: 15px; }
+    .btn-download { padding: 12px 50px; font-size: 1.1rem; border-radius: 50px; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="card">
-      <div class="d-flex align-items-center mb-3">
-        <i class="bi bi-truck gatepass-icon me-3"></i>
-        <h3 class="mb-0 text-primary">Gate Pass Details</h3>
-        <button class="btn btn-success ms-auto" id="downloadBtn">
-          <i class="bi bi-download"></i> Download PDF
-        </button>
-      </div>
-      <hr>
 
-      <h5>Route:</h5>
-      <p>
-        <strong>Sender:</strong> <%= gatepass.sender?.name || 'N/A' %> → 
-        <strong>Dispatch From:</strong> <%= gatepass.dispatchFrom?.hubName || 'N/A' %> - <%= gatepass.dispatchFrom?.details || '' %> → 
-        <strong>Dispatch To:</strong> <%= gatepass.dispatchTo?.hubName || 'N/A' %> - <%= gatepass.dispatchTo?.details || '' %> → 
-        <strong>Receiver:</strong> <%= gatepass.receiver?.name || 'N/A' %>
-      </p>
-
-      <h5>Prepared By:</h5>
-      <p>
-        Name: <%= gatepass.preparedBy?.name || 'N/A' %><br>
-        Phone: <%= gatepass.preparedBy?.phone || 'N/A' %><br>
-        Designation: <%= gatepass.preparedBy?.designation || 'N/A' %><br>
-        Employee ID: <%= gatepass.preparedBy?.employee_id || 'N/A' %><br>
-        Department: <%= gatepass.preparedBy?.department || 'N/A' %>
-      </p>
-
-      <h5>Items:</h5>
-      <ul>
-        <% (gatepass.items || []).forEach(item => { %>
-          <li><strong><%= item.name || 'Unknown' %></strong> - Qty: <%= item.quantity || 0 %> <%= item.unit || '' %>
-            <% if(item.comments) { %> (Comments: <%= item.comments %>)<% } %>
-          </li>
-        <% }) %>
-      </ul>
-
-      <% if(gatepass.remarks) { %>
-        <h5>Remarks:</h5>
-        <p><%= gatepass.remarks %></p>
-      <% } %>
-
-      <p class="text-muted mt-3"><small>Created At: <%= new Date(gatepass.createdAt).toLocaleString('en-IN') %></small></p>
+  <div class="page-header text-center">
+    <div class="container">
+      <h1 class="display-4 fw-bold">Gate Pass Details</h1>
+      <p class="lead">View details and download as PDF</p>
     </div>
   </div>
 
-  <!-- THIS LINE IS THE ONLY ONE THAT MATTERS FOR FIXING THE ERROR -->
-  <script>
-    window.gatepassData = <%- JSON.stringify(gatepass || {}) %>;
-  </script>
+  <div class="container mb-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="card form-card">
+          <div class="card-body p-5">
 
-  <!-- PDF Generation Script (100% working) -->
-  <script>
-    document.getElementById('downloadBtn').addEventListener('click', () => {
-      if (!window.gatepassData) {
-        alert('Data not loaded. Please refresh.');
-        return;
-      }
+            <!-- Gate Pass ID and Dates -->
+            <div class="mb-4">
+              <label class="form-label fw-bold">Gate Pass ID</label>
+              <p class="form-control"><%= gatepass._id %></p>
+            </div>
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Dispatch Date</label>
+                <p class="form-control"><%= new Date(gatepass.date).toLocaleDateString('en-GB') %></p>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Created At</label>
+                <p class="form-control"><%= new Date(gatepass.createdAt).toLocaleDateString('en-GB') %></p>
+              </div>
+            </div>
 
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      const d = window.gatepassData;
+            <!-- Dispatch From -->
+            <div class="mb-4">
+              <label class="form-label fw-bold">Dispatch From</label>
+              <p class="form-control"><%= gatepass.dispatchFrom.hubName %> - <%= gatepass.dispatchFrom.details %></p>
+            </div>
 
-      doc.setFontSize(20);
-      doc.text('Gate Pass Details', 105, 20, { align: 'center' });
+            <!-- Dispatch To -->
+            <div class="mb-4">
+              <label class="form-label fw-bold">Dispatch To</label>
+              <p class="form-control"><%= gatepass.dispatchTo.hubName %> - <%= gatepass.dispatchTo.details %></p>
+            </div>
 
-      let y = 35;
-      doc.setFontSize(12);
+            <!-- Sender -->
+            <div class="mb-4">
+              <h5 class="fw-bold text-primary mb-3">Sender's Details</h5>
+              <div class="row g-3">
+                <div class="col-md-6"><label class="form-label">Name</label><p class="form-control"><%= gatepass.sender.name %></p></div>
+                <div class="col-md-6"><label class="form-label">Phone</label><p class="form-control"><%= gatepass.sender.phone %></p></div>
+                <div class="col-md-4"><label class="form-label">Designation</label><p class="form-control"><%= gatepass.sender.designation %></p></div>
+                <div class="col-md-4"><label class="form-label">Employee ID</label><p class="form-control"><%= gatepass.sender.employee_id %></p></div>
+                <div class="col-md-4"><label class="form-label">Department</label><p class="form-control"><%= gatepass.sender.department %></p></div>
+              </div>
+            </div>
 
-      doc.text(`Sender: ${d.sender?.name || 'N/A'}`, 14, y); y += 8;
-      doc.text(`Dispatch From: ${d.dispatchFrom?.hubName || 'N/A'} - ${d.dispatchFrom?.details || ''}`, 14, y); y += 8;
-      doc.text(`Dispatch To: ${d.dispatchTo?.hubName || 'N/A'} - ${d.dispatchTo?.details || ''}`, 14, y); y += 8;
-      doc.text(`Receiver: ${d.receiver?.name || 'N/A'}`, 14, y); y += 12;
+            <!-- Receiver -->
+            <div class="mb-4">
+              <h5 class="fw-bold text-primary mb-3">Receiver's Details</h5>
+              <div class="row g-3">
+                <div class="col-md-6"><label class="form-label">Name</label><p class="form-control"><%= gatepass.receiver.name %></p></div>
+                <div class="col-md-6"><label class="form-label">Phone</label><p class="form-control"><%= gatepass.receiver.phone %></p></div>
+                <div class="col-md-4"><label class="form-label">Designation</label><p class="form-control"><%= gatepass.receiver.designation %></p></div>
+                <div class="col-md-4"><label class="form-label">Employee ID</label><p class="form-control"><%= gatepass.receiver.employee_id %></p></div>
+                <div class="col-md-4"><label class="form-label">Department</label><p class="form-control"><%= gatepass.receiver.department %></p></div>
+              </div>
+            </div>
 
-      doc.setFont('helvetica', 'bold');
-      doc.text('Prepared By:', 14, y); y += 8;
-      doc.setFont('helvetica', 'normal');
-      doc.text(`Name: ${d.preparedBy?.name || 'N/A'}`, 14, y); y += 7;
-      doc.text(`Phone: ${d.preparedBy?.phone || 'N/A'}`, 14, y); y += 7;
-      doc.text(`Designation: ${d.preparedBy?.designation || 'N/A'}`, 14, y); y += 7;
-      doc.text(`Employee ID: ${d.preparedBy?.employee_id || 'N/A'}`, 14, y); y += 7;
-      doc.text(`Department: ${d.preparedBy?.department || 'N/A'}`, 14, y); y += 12;
+            <!-- Prepared By -->
+            <div class="mb-4">
+              <h5 class="fw-bold text-primary mb-3">Prepared By</h5>
+              <div class="row g-3">
+                <div class="col-md-6"><label class="form-label">Name</label><p class="form-control"><%= gatepass.preparedBy.name %></p></div>
+                <div class="col-md-6"><label class="form-label">Phone</label><p class="form-control"><%= gatepass.preparedBy.phone %></p></div>
+                <div class="col-md-4"><label class="form-label">Designation</label><p class="form-control"><%= gatepass.preparedBy.designation %></p></div>
+                <div class="col-md-4"><label class="form-label">Employee ID</label><p class="form-control"><%= gatepass.preparedBy.employee_id %></p></div>
+                <div class="col-md-4"><label class="form-label">Department</label><p class="form-control"><%= gatepass.preparedBy.department %></p></div>
+              </div>
+            </div>
 
-      const items = (d.items || []).map(i => [i.name || '', i.quantity || '', i.unit || '', i.comments || '']);
+            <!-- Items -->
+            <div class="mb-4">
+              <h5 class="fw-bold text-primary mb-3">Items</h5>
+              <div id="items-container">
+                <% gatepass.items.forEach((item, index) => { %>
+                  <div class="item-row">
+                    <div class="row g-3">
+                      <div class="col-md-5"><label class="form-label">Item Name</label><p class="form-control"><%= item.name %></p></div>
+                      <div class="col-md-2"><label class="form-label">Qty</label><p class="form-control"><%= item.quantity %></p></div>
+                      <div class="col-md-2"><label class="form-label">Unit</label><p class="form-control"><%= item.unit %></p></div>
+                      <div class="col-md-3"><label class="form-label">Comments</label><p class="form-control"><%= item.comments || 'N/A' %></p></div>
+                    </div>
+                  </div>
+                <% }) %>
+              </div>
+            </div>
 
-      doc.autoTable({
-        head: [['Item Name', 'Quantity', 'Unit', 'Comments']],
-        body: items.length > 0 ? items : [['No items found', '', '', '']],
-        startY: y,
-        theme: 'grid',
-        headStyles: { fillColor: [102, 126, 234], textColor: 255 },
-        styles: { fontSize: 10 },
-        margin: { left: 14, right: 14 }
-      });
+            <!-- Remarks -->
+            <div class="mb-4">
+              <label class="form-label fw-bold">Remarks</label>
+              <textarea class="form-control" rows="5" readonly><%= gatepass.remarks || 'N/A' %></textarea>
+            </div>
 
-      y = doc.lastAutoTable.finalY + 15;
+            <div class="text-center">
+              <a href="/api/v1/gatepass/<%= gatepass._id %>/pdf" class="btn btn-primary btn-lg btn-download shadow-lg" download>Download PDF</a>
+              <a href="/api/v1/gatepass" class="btn btn-secondary btn-lg ms-3">Back</a>
+              <!-- Add Edit button later: <a href="/api/v1/gatepass/<%= gatepass._id %>/edit" class="btn btn-warning btn-lg ms-3">Edit</a> -->
+            </div>
 
-      if (d.remarks) {
-        const lines = doc.splitTextToSize(d.remarks, 180);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Remarks:', 14, y); y += 8;
-        doc.setFont('helvetica', 'normal');
-        doc.text(lines, 14, y);
-      }
-
-      const dateStr = d.createdAt ? new Date(d.createdAt).toISOString().slice(0,10) : 'unknown';
-      doc.save(`GatePass_${dateStr}.pdf`);
-    });
-  </script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

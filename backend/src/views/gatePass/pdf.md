@@ -100,7 +100,7 @@
     <!-- Header -->
     <table class="header-table">
       <tr>
-        <td><img class="logo" src="data:image/png;base64,<%= logoBase64 %>" alt="Daraz" style="height: 50px;"></td>
+        <td><img class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Daraz_logo.svg/1200px-Daraz_logo.svg.png" alt="Daraz"></td>
         <td class="gatepass-id">GATE PASS#: <%= gatepass._id ? 'BD-IT' + new Date(gatepass.createdAt).toISOString().replace(/[-T:.]/g, '').slice(0,14) : 'N/A' %></td>
       </tr>
     </table>
@@ -220,7 +220,7 @@
           </tr>
         <% } %>
       </tbody>
-    </ table>
+    </table>
 
     <!-- Serial Comments -->
     <% if (gatepass.items && gatepass.items.some(i => i.comments)) { %>
@@ -255,19 +255,19 @@
       </tr>
       <tr>
         <td style="width: 25%; font-weight: bold;">Name:</td>
-        <td style="width: 25%;">_________________________</td>
+        <td style="width: 25%;"></td>
         <td style="width: 25%; font-weight: bold;">Name:</td>
-        <td style="width: 25%;">_________________________</td>
+        <td style="width: 25%;"></td>
       </tr>
       <tr>
         <td style="font-weight: bold;">Phone No:</td>
-        <td>_________________________</td>
+        <td></td>
         <td style="font-weight: bold;">Phone No:</td>
         <td><%= gatepass.receiver?.phone || '' %></td>
       </tr>
     </table>
 
-    <!-- FINAL SIGNATURE BLOCKS (EXACTLY AS IN YOUR PDF) -->
+    <!-- FINAL SIGNATURE BLOCKS (EXACTLY AS IN YOUR IMAGE) -->
     <table style="border-collapse: collapse; width: 100%; margin-top: 15px;">
       <tr>
         <!-- PREPARED BY -->
@@ -297,9 +297,9 @@
           <!-- Intentionally blank for physical signatures -->
         </td>
       </tr>
-      <!-- Bottom Row: BEARER (1 col) | AUTHORISED (2 cols) -->
+      <!-- Bottom Row -->
       <tr>
-        <td style="border: 1px solid #000; padding: 6px; text-align: center; vertical-align: top;">
+        <td colspan="1" style="border: 1px solid #000; padding: 6px; text-align: center; vertical-align: top;">
           <div style="font-weight: bold; margin-bottom: 6px;">BEARER SIGNATURE</div>
           <!-- Empty -->
         </td>

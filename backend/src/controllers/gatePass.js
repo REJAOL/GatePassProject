@@ -2,6 +2,10 @@ const Address = require("../models/Address.model");
 const GatePass = require("../models/GatePass.model");
 const Receiver = require("../models/Receiver.model");
 const Sender = require("../models/Sender.model");
+const path = require('path')
+const fs = require('fs')
+const ejs = require('ejs')
+const htmlToPdf = require('html-pdf-node')
 
 
 
@@ -198,5 +202,36 @@ const renderGatePassDetails = async (req, res) => {
   }
 };
 
+const downloadPdf = async (req, res) => {
+  try {
+    const gatepass = await GatePass.findById(req.params.id)
+      .populate("sender receiver dispatchFrom dispatchTo");
 
-module.exports = {create, getAllGatePass, createGatePass, renderGatePassCreate, renderGatePassDetails}
+    if (!gatepass) return res.status(404).send("Gatepass not found");
+
+    // Convert logo to Base64
+    const logoPath = path.join(__dirname, "..","..", "public", "images", "daraz-logo.png");
+    const logoBase64 = fs.readFileSync(logoPath, "base64");
+
+    // Render EJS with Base64
+    const filePath = path.join(__dirname, "..", "views/gatepass/pdf.ejs");
+    const html = await ejs.renderFile(filePath, { gatepass, logoBase64 });
+
+    const file = { content: html };
+    const options = {
+      format: "A4",
+      margin: { top: "10mm", right: "10mm", bottom: "10mm", left: "10mm" },
+    };
+
+    const pdfBuffer = await htmlToPdf.generatePdf(file, options);
+
+    res.set("Content-Type", "application/pdf");
+    res.set("Content-Disposition", `attachment; filename="gatepass_${gatepass._id}.pdf"`);
+    res.send(pdfBuffer);
+  } catch (err) {
+    console.error('pdf generation failed', err)
+    res.status(500).send(err.message);
+  }
+};
+
+module.exports = {create, getAllGatePass, createGatePass, renderGatePassCreate, renderGatePassDetails, downloadPdf}
