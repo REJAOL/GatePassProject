@@ -14,4 +14,5 @@ router.get('/:id', renderGatePassDetails);
 router.get("/:id/pdf", downloadPdf);
 
 
+
 module.exports=router
