@@ -2,18 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Gate Pass - Daraz</title>
   <style>
     body {
-      font-family: 'Segoe UI', Arial, sans-serif;
+      font-family: 'Segoe UI', 'Tahoma', Arial, sans-serif;
       font-size: 11px;
       line-height: 1.3;
+      color: #000;
+      background: #fff;
       margin: 0;
       padding: 10mm;
     }
     .page {
       width: 210mm;
       min-height: 297mm;
+      margin: 0 auto;
+      box-sizing: border-box;
+      position: relative;
     }
     table {
       width: 100%;
@@ -30,55 +36,88 @@
       font-weight: bold;
       text-align: left;
     }
+    .header-table td {
+      border: none;
+      padding: 0;
+    }
     .logo {
       height: 20px;
     }
-    .field-label {
+    .gatepass-id {
+      text-align: right;
       font-weight: bold;
-      display: inline-block;
-      min-width: 90px;
+    }
+    .company-name {
+      text-align: center;
+      font-weight: bold;
+      margin: 4px 0;
+    }
+    .dates-table td {
+      border: none;
+      padding: 2px 0;
+    }
+    .items-table th, .items-table td {
+      text-align: center;
+    }
+    .items-table th:nth-child(2),
+    .items-table td:nth-child(2) {
+      text-align: left;
     }
     .remarks-box {
       border: 1px solid #000;
       padding: 8px;
       min-height: 80px;
       white-space: pre-wrap;
+      font-family: inherit;
+      margin-top: 4px;
     }
+    .footer {
+      position: absolute;
+      bottom: 10mm;
+      left: 10mm;
+      right: 10mm;
+      text-align: center;
+      font-size: 9px;
+      color: #555;
+      border-top: 1px solid #ccc;
+      padding-top: 4px;
+    }
+    .field-label {
+      font-weight: bold;
+      display: inline-block;
+      min-width: 90px;
+    }
+    .serial-comments {
+      font-size: 10px;
+      line-height: 1.2;
+      white-space: pre-wrap;
+      margin-top: 4px;
+    }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
   <div class="page">
     <!-- Header -->
-    <table style="border: none;">
+    <table class="header-table">
       <tr>
-        <td style="border: none;">
-          <% if (logoBase64) { %>
-            <img src="data:image/png;base64,<%= logoBase64 %>" class="logo" alt="Daraz">
-          <% } %>
-        </td>
-        <td style="border: none; text-align: right; font-weight: bold;">
-          GATE PASS#: <%= gatepass._id ? 'BD-IT' + new Date(gatepass.createdAt).toISOString().replace(/[-T:.]/g, '').slice(0,14) : 'N/A' %>
-        </td>
+        <td><img class="logo" src="/images/daraz-logo.png" alt="Daraz"></td>
+        <td class="gatepass-id">GATE PASS#: <%= gatepass._id ? 'BD-IT' + new Date(gatepass.createdAt).toISOString().replace(/[-T:.]/g, '').slice(0,14) : 'N/A' %></td>
       </tr>
     </table>
 
-    <div style="text-align: center; font-weight: bold; margin: 4px 0;">
-      Daraz Bangladesh Limited
-    </div>
+    <div class="company-name">Daraz Bangladesh Limited</div>
 
-    <!-- Dates -->
-    <table style="border: none;">
+    <table class="dates-table">
       <tr>
-        <td style="border: none;">
-          Dispatch Date: <%= gatepass.date ? new Date(gatepass.date).toLocaleDateString('en-GB') : '____/____/____' %>
-        </td>
-        <td style="border: none;">Receiving Date: _____________________</td>
+        <td>Dispatch Date: <%= gatepass.date ? new Date(gatepass.date).toLocaleDateString('en-GB') : '____/____/____' %></td>
+        <td>Receiving Date: _____________________</td>
       </tr>
     </table>
 
-    <div style="text-align: center; margin: 6px 0; font-weight: bold;">
-      Challan Type: Internal/External
-    </div>
+    <table style="border: none; text-align: center;">
+      <tr><td>Challan Type: Internal/External</td></tr>
+    </table>
 
     <!-- Dispatch From & To -->
     <table>
@@ -131,12 +170,29 @@
           <td style="font-weight:bold;">Phone No:</td>
           <td><%= gatepass.receiver?.phone || 'N/A' %></td>
         </tr>
-        <!-- Add designation, employee_id, department if needed -->
+        <tr>
+          <td style="font-weight:bold;">Designation:</td>
+          <td><%= gatepass.sender?.designation || 'N/A' %></td>
+          <td style="font-weight:bold;">Designation:</td>
+          <td><%= gatepass.receiver?.designation || 'N/A' %></td>
+        </tr>
+        <tr>
+          <td style="font-weight:bold;">Employee ID:</td>
+          <td><%= gatepass.sender?.employee_id || 'N/A' %></td>
+          <td style="font-weight:bold;">Employee ID:</td>
+          <td><%= gatepass.receiver?.employee_id || 'N/A' %></td>
+        </tr>
+        <tr>
+          <td style="font-weight:bold;">Department:</td>
+          <td><%= gatepass.sender?.department || 'N/A' %></td>
+          <td style="font-weight:bold;">Department:</td>
+          <td><%= gatepass.receiver?.department || 'N/A' %></td>
+        </tr>
       </tbody>
     </table>
 
-    <!-- Items Table -->
-    <table>
+    <!-- Items -->
+    <table class="items-table">
       <thead>
         <tr>
           <th>SL NO</th>
@@ -160,24 +216,193 @@
       </tbody>
     </table>
 
+    <!-- Serial Comments -->
+    <% if (gatepass.items?.some(i => i.comments)) { %>
+      <div class="serial-comments">
+        <% gatepass.items.forEach(item => { %>
+          <%= item.comments ? item.comments + ' ' : '' %>
+        <% }); %>
+      </div>
+    <% } %>
+
     <!-- Remarks -->
     <table>
       <tr><th>Remarks</th></tr>
       <tr><td class="remarks-box"><%= gatepass.remarks || '' %></td></tr>
     </table>
 
-    <!-- Prepared By -->
+    <!-- Bearer & Recipient -->
     <table>
-      <tr><th>Prepared By</th></tr>
       <tr>
-        <td>
-          <div><span class="field-label">Name:</span> <%= gatepass.preparedBy?.name || 'N/A' %></div>
-          <div><span class="field-label">Designation:</span> <%= gatepass.preparedBy?.designation || 'N/A' %></div>
-          <div><span class="field-label">Employee ID:</span> <%= gatepass.preparedBy?.employee_id || 'N/A' %></div>
-          <div><span class="field-label">Sign:</span> <%= (gatepass.preparedBy?.name || '').toLowerCase() %></div>
-        </td>
+        <th colspan="2">Bearer Details</th>
+        <th colspan="2">Recipient Details</th>
+      </tr>
+      <tr>
+        <td style="width:25%; font-weight:bold;">Name:</td>
+        <td>_________________________</td>
+        <td style="width:25%; font-weight:bold;">Name:</td>
+        <td>_________________________</td>
+      </tr>
+      <tr>
+        <td style="font-weight:bold;">Phone No:</td>
+        <td>_________________________</td>
+        <td style="font-weight:bold;">Phone No:</td>
+        <td><%= gatepass.receiver?.phone || '' %></td>
       </tr>
     </table>
+
+    <!-- Prepared By -->
+    <table>
+      <tr><th colspan="4">Prepared By</th></tr>
+      <tr>
+        <td style="width:25%; font-weight:bold;">Name:</td>
+        <td style="width:25%;"><%= gatepass.preparedBy?.name || 'N/A' %></td>
+        <td style="width:25%; font-weight:bold;">Designation:</td>
+        <td style="width:25%;"><%= gatepass.preparedBy?.designation || 'N/A' %></td>
+      </tr>
+      <tr>
+        <td style="font-weight:bold;">Employee ID:</td>
+        <td><%= gatepass.preparedBy?.employee_id || 'N/A' %></td>
+        <td style="font-weight:bold;">Sign:</td>
+        <td><%= (gatepass.preparedBy?.name || '').toLowerCase() %></td>
+      </tr>
+    </table>
+
+    <!-- Signature Blocks -->
+    <table style="margin-top: 15px;">
+      <tr>
+        <td style="border:1px solid #000; text-align:center; padding:6px; width:33%;">PREPARED BY</td>
+        <td style="border:1px solid #000; text-align:center; padding:6px; width:33%;">SECURITY CHECK</td>
+        <td style="border:1px solid #000; text-align:center; padding:6px; width:33%;">RECEIVED BY</td>
+      </tr>
+      <tr>
+        <td colspan="3" style="border:1px solid #000; height:40px;"></td>
+      </tr>
+      <tr>
+        <td style="border:1px solid #000; text-align:center; padding:6px;">BEARER SIGNATURE</td>
+        <td colspan="2" style="border:1px solid #000; text-align:center; padding:6px;">AUTHORISED SIGNATURE</td>
+      </tr>
+    </table>
+
+    <div class="footer">
+      Daraz Internal B2 DR-COMP-FRM-GPFRM &nbsp; 28 October, 2024 &nbsp; Version 1.1
+    </div>
+
+    <!-- PDF Button -->
+    <div style="text-align:center; margin-top:20px;">
+      <button id="downloadBtn" class="btn">Download PDF</button>
+    </div>
   </div>
+
+  <!-- jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+  <script>
+    // Safely inject data
+    const gatepassData = <%- JSON.stringify(gatepass || {}) %>;
+
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const margin = 10;
+      let y = 20;
+
+      // Header
+      doc.setFontSize(16);
+      doc.text("Daraz Bangladesh Limited", pageWidth / 2, y, { align: 'center' });
+      y += 10;
+
+      doc.setFontSize(12);
+      doc.text(`GATE PASS#: ${gatepassData._id ? 'BD-IT' + new Date(gatepassData.createdAt).toISOString().replace(/[-T:.]/g, '').slice(0,14) : 'N/A'}`, pageWidth - margin, 10, { align: 'right' });
+
+      // Dates
+      doc.text(`Dispatch Date: ${gatepassData.date ? new Date(gatepassData.date).toLocaleDateString('en-GB') : '____/____/____'}`, margin, y);
+      doc.text("Receiving Date: ___________________", pageWidth - 100, y);
+      y += 10;
+
+      doc.text("Challan Type: Internal/External", pageWidth / 2, y, { align: 'center' });
+      y += 15;
+
+      // Dispatch From / To
+      const fromName = gatepassData.dispatchFrom?.hubName || 'N/A';
+      const fromAddr = gatepassData.dispatchFrom?.details || 'N/A';
+      const toName = gatepassData.dispatchTo?.hubName || 'N/A';
+      const toAddr = gatepassData.dispatchTo?.details || 'N/A';
+
+      doc.text("Dispatch From", margin, y);
+      doc.text("Dispatch To", pageWidth / 2 + 10, y);
+      y += 6;
+      doc.text(`Name: ${fromName}`, margin, y);
+      doc.text(`Name: ${toName}`, pageWidth / 2 + 10, y); y += 4;
+      doc.text(`Zone: ${fromName}`, margin, y);
+      doc.text(`Zone: ${toName}`, pageWidth / 2 + 10, y); y += 4;
+      doc.text(`Address: ${fromAddr}`, margin, y);
+      doc.text(`Address: ${toAddr}`, pageWidth / 2 + 10, y); y += 10;
+
+      // Sender / Receiver
+      const sender = gatepassData.sender || {};
+      const receiver = gatepassData.receiver || {};
+
+      doc.text("Sender's Details", margin, y);
+      doc.text("Receiver's Details", pageWidth / 2 + 10, y);
+      y += 6;
+      doc.text(`Name: ${sender.name || 'N/A'}`, margin, y);
+      doc.text(`Name: ${receiver.name || 'N/A'}`, pageWidth / 2 + 10, y); y += 4;
+      doc.text(`Phone No: ${sender.phone || 'N/A'}`, margin, y);
+      doc.text(`Phone No: ${receiver.phone || 'N/A'}`, pageWidth / 2 + 10, y); y += 4;
+      doc.text(`Designation: ${sender.designation || 'N/A'}`, margin, y);
+      doc.text(`Designation: ${receiver.designation || 'N/A'}`, pageWidth / 2 + 10, y); y += 4;
+      doc.text(`Employee ID: ${sender.employee_id || 'N/A'}`, margin, y);
+      doc.text(`Employee ID: ${receiver.employee_id || 'N/A'}`, pageWidth / 2 + 10, y); y += 4;
+      doc.text(`Department: ${sender.department || 'N/A'}`, margin, y);
+      doc.text(`Department: ${receiver.department || 'N/A'}`, pageWidth / 2 + 10, y); y += 10;
+
+      // Items Table
+      const items = (gatepassData.items || []).map((item, i) => [
+        i + 1,
+        item.name || '',
+        item.quantity || '',
+        item.unit || ''
+      ]);
+      while (items.length < 5) {
+        items.push([items.length + 1, '', '', '']);
+      }
+
+      doc.autoTable({
+        head: [['SL NO', 'ITEM DESCRIPTION', 'QUANTITY', 'UNIT']],
+        body: items,
+        startY: y,
+        theme: 'grid',
+        headStyles: { fillColor: [240, 240, 240], textColor: [0,0,0] },
+        styles: { fontSize: 10, cellPadding: 2 }
+      });
+      y = doc.lastAutoTable.finalY + 10;
+
+      // Remarks
+      doc.text("Remarks", margin, y);
+      y += 6;
+      const remarks = gatepassData.remarks || '';
+      const splitRemarks = doc.splitTextToSize(remarks, pageWidth - 2 * margin);
+      doc.text(splitRemarks, margin, y);
+      y += splitRemarks.length * 5 + 10;
+
+      // Prepared By
+      const pb = gatepassData.preparedBy || {};
+      doc.text("Prepared By", margin, y);
+      y += 6;
+      doc.text(`Name: ${pb.name || 'N/A'}`, margin, y); y += 4;
+      doc.text(`Designation: ${pb.designation || 'N/A'}`, margin, y); y += 4;
+      doc.text(`Employee ID: ${pb.employee_id || 'N/A'}`, margin, y); y += 4;
+      doc.text(`Sign: ${(pb.name || '').toLowerCase()}`, margin, y); y += 10;
+
+      // Footer
+      doc.setFontSize(9);
+      doc.text("Daraz Internal B2 DR-COMP-FRM-GPFRM  28 October, 2024  Version 1.1", pageWidth / 2, 287, { align: 'center' });
+
+      doc.save(`GatePass_${new Date().getTime()}.pdf`);
+    });
+  </script>
 </body>
 </html>

@@ -23,5 +23,6 @@ app.use('/api/v1/gatepass', gatePassRouter)
 app.use('/api/v1/addresses', addressRouter)
 app.use('/api/v1/receivers', receiverRouter)
 app.use('/api/v1/senders', senderRouter)
+app.use('/gatepass', require('./routes/gatePass.route'));
 
 module.exports = app
