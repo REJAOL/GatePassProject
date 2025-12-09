@@ -4,10 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Gate Pass Details</title>
-
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
   <style>
     body { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; font-family: 'Segoe UI', sans-serif; }
     .page-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2.5rem 0; margin-bottom: 2rem; border-radius: 0 0 20px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
@@ -17,7 +15,6 @@
   </style>
 </head>
 <body>
-
   <div class="page-header text-center">
     <div class="container">
       <h1 class="display-4 fw-bold">Gate Pass Details</h1>
@@ -50,24 +47,24 @@
             <!-- Dispatch From -->
             <div class="mb-4">
               <label class="form-label fw-bold">Dispatch From</label>
-              <p class="form-control"><%= gatepass.dispatchFrom.hubName %> - <%= gatepass.dispatchFrom.details %></p>
+              <p class="form-control"><%= gatepass.dispatchFrom?.hubName || 'N/A' %> - <%= gatepass.dispatchFrom?.details || 'N/A' %></p>
             </div>
 
             <!-- Dispatch To -->
             <div class="mb-4">
               <label class="form-label fw-bold">Dispatch To</label>
-              <p class="form-control"><%= gatepass.dispatchTo.hubName %> - <%= gatepass.dispatchTo.details %></p>
+              <p class="form-control"><%= gatepass.dispatchTo?.hubName || 'N/A' %> - <%= gatepass.dispatchTo?.details || 'N/A' %></p>
             </div>
 
             <!-- Sender -->
             <div class="mb-4">
               <h5 class="fw-bold text-primary mb-3">Sender's Details</h5>
               <div class="row g-3">
-                <div class="col-md-6"><label class="form-label">Name</label><p class="form-control"><%= gatepass.sender.name %></p></div>
-                <div class="col-md-6"><label class="form-label">Phone</label><p class="form-control"><%= gatepass.sender.phone %></p></div>
-                <div class="col-md-4"><label class="form-label">Designation</label><p class="form-control"><%= gatepass.sender.designation %></p></div>
-                <div class="col-md-4"><label class="form-label">Employee ID</label><p class="form-control"><%= gatepass.sender.employee_id %></p></div>
-                <div class="col-md-4"><label class="form-label">Department</label><p class="form-control"><%= gatepass.sender.department %></p></div>
+                <div class="col-md-6"><label class="form-label">Name</label><p class="form-control"><%= gatepass.sender?.name || 'N/A' %></p></div>
+                <div class="col-md-6"><label class="form-label">Phone</label><p class="form-control"><%= gatepass.sender?.phone || 'N/A' %></p></div>
+                <div class="col-md-4"><label class="form-label">Designation</label><p class="form-control"><%= gatepass.sender?.designation || 'N/A' %></p></div>
+                <div class="col-md-4"><label class="form-label">Employee ID</label><p class="form-control"><%= gatepass.sender?.employee_id || 'N/A' %></p></div>
+                <div class="col-md-4"><label class="form-label">Department</label><p class="form-control"><%= gatepass.sender?.department || 'N/A' %></p></div>
               </div>
             </div>
 
@@ -75,11 +72,11 @@
             <div class="mb-4">
               <h5 class="fw-bold text-primary mb-3">Receiver's Details</h5>
               <div class="row g-3">
-                <div class="col-md-6"><label class="form-label">Name</label><p class="form-control"><%= gatepass.receiver.name %></p></div>
-                <div class="col-md-6"><label class="form-label">Phone</label><p class="form-control"><%= gatepass.receiver.phone %></p></div>
-                <div class="col-md-4"><label class="form-label">Designation</label><p class="form-control"><%= gatepass.receiver.designation %></p></div>
-                <div class="col-md-4"><label class="form-label">Employee ID</label><p class="form-control"><%= gatepass.receiver.employee_id %></p></div>
-                <div class="col-md-4"><label class="form-label">Department</label><p class="form-control"><%= gatepass.receiver.department %></p></div>
+                <div class="col-md-6"><label class="form-label">Name</label><p class="form-control"><%= gatepass.receiver?.name || 'N/A' %></p></div>
+                <div class="col-md-6"><label class="form-label">Phone</label><p class="form-control"><%= gatepass.receiver?.phone || 'N/A' %></p></div>
+                <div class="col-md-4"><label class="form-label">Designation</label><p class="form-control"><%= gatepass.receiver?.designation || 'N/A' %></p></div>
+                <div class="col-md-4"><label class="form-label">Employee ID</label><p class="form-control"><%= gatepass.receiver?.employee_id || 'N/A' %></p></div>
+                <div class="col-md-4"><label class="form-label">Department</label><p class="form-control"><%= gatepass.receiver?.department || 'N/A' %></p></div>
               </div>
             </div>
 
@@ -87,11 +84,11 @@
             <div class="mb-4">
               <h5 class="fw-bold text-primary mb-3">Prepared By</h5>
               <div class="row g-3">
-                <div class="col-md-6"><label class="form-label">Name</label><p class="form-control"><%= gatepass.preparedBy.name %></p></div>
-                <div class="col-md-6"><label class="form-label">Phone</label><p class="form-control"><%= gatepass.preparedBy.phone %></p></div>
-                <div class="col-md-4"><label class="form-label">Designation</label><p class="form-control"><%= gatepass.preparedBy.designation %></p></div>
-                <div class="col-md-4"><label class="form-label">Employee ID</label><p class="form-control"><%= gatepass.preparedBy.employee_id %></p></div>
-                <div class="col-md-4"><label class="form-label">Department</label><p class="form-control"><%= gatepass.preparedBy.department %></p></div>
+                <div class="col-md-6"><label class="form-label">Name</label><p class="form-control"><%= gatepass.preparedBy?.name || 'N/A' %></p></div>
+                <div class="col-md-6"><label class="form-label">Phone</label><p class="form-control"><%= gatepass.preparedBy?.phone || 'N/A' %></p></div>
+                <div class="col-md-4"><label class="form-label">Designation</label><p class="form-control"><%= gatepass.preparedBy?.designation || 'N/A' %></p></div>
+                <div class="col-md-4"><label class="form-label">Employee ID</label><p class="form-control"><%= gatepass.preparedBy?.employee_id || 'N/A' %></p></div>
+                <div class="col-md-4"><label class="form-label">Department</label><p class="form-control"><%= gatepass.preparedBy?.department || 'N/A' %></p></div>
               </div>
             </div>
 
@@ -99,7 +96,7 @@
             <div class="mb-4">
               <h5 class="fw-bold text-primary mb-3">Items</h5>
               <div id="items-container">
-                <% gatepass.items.forEach((item, index) => { %>
+                <% (gatepass.items || []).forEach((item, index) => { %>
                   <div class="item-row">
                     <div class="row g-3">
                       <div class="col-md-5"><label class="form-label">Item Name</label><p class="form-control"><%= item.name %></p></div>
@@ -119,9 +116,8 @@
             </div>
 
             <div class="text-center">
-              <a href="/api/v1/gatepass/<%= gatepass._id %>/pdf" class="btn btn-primary btn-lg btn-download shadow-lg" download>Download PDF</a>
+              <button id="downloadPdfBtn" class="btn btn-primary btn-lg btn-download shadow-lg">Download PDF</button>
               <a href="/api/v1/gatepass" class="btn btn-secondary btn-lg ms-3">Back</a>
-              <!-- For future edit: <a href="/api/v1/gatepass/<%= gatepass._id %>/edit" class="btn btn-warning btn-lg ms-3">Edit</a> -->
             </div>
 
           </div>
@@ -131,5 +127,113 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const gatepass = <%- JSON.stringify(gatepass || {}) %>;
+
+      document.getElementById('downloadPdfBtn').addEventListener('click', () => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('p', 'mm', 'a4');
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const margin = 10;
+        let y = 20;
+
+        // Header
+        doc.setFontSize(16);
+        doc.text("Daraz Bangladesh Limited", pageWidth / 2, y, { align: 'center' });
+        y += 10;
+        doc.setFontSize(12);
+        doc.text(`GATE PASS#: ${gatepass._id ? 'BD-IT' + new Date(gatepass.createdAt).toISOString().replace(/[-T:.]/g, '').slice(0,14) : 'N/A'}`, pageWidth - margin, 10, { align: 'right' });
+
+        // Dates
+        doc.text(`Dispatch Date: ${gatepass.date ? new Date(gatepass.date).toLocaleDateString('en-GB') : '____/____/____'}`, margin, y);
+        doc.text("Receiving Date: ___________________", pageWidth - 100, y);
+        y += 10;
+
+        doc.text("Challan Type: Internal/External", pageWidth / 2, y, { align: 'center' });
+        y += 15;
+
+        // Dispatch From / To
+        const from = gatepass.dispatchFrom || {};
+        const to = gatepass.dispatchTo || {};
+        doc.text("Dispatch From", margin, y);
+        doc.text("Dispatch To", pageWidth / 2 + 10, y);
+        y += 6;
+        doc.text(`Name: ${from.hubName || 'N/A'}`, margin, y);
+        doc.text(`Name: ${to.hubName || 'N/A'}`, pageWidth / 2 + 10, y); y += 4;
+        doc.text(`Zone: ${from.hubName || 'N/A'}`, margin, y);
+        doc.text(`Zone: ${to.hubName || 'N/A'}`, pageWidth / 2 + 10, y); y += 4;
+        doc.text(`Address: ${from.details || 'N/A'}`, margin, y);
+        doc.text(`Address: ${to.details || 'N/A'}`, pageWidth / 2 + 10, y); y += 10;
+
+        // Sender / Receiver
+        const sender = gatepass.sender || {};
+        const receiver = gatepass.receiver || {};
+        doc.text("Sender's Details", margin, y);
+        doc.text("Receiver's Details", pageWidth / 2 + 10, y);
+        y += 6;
+        doc.text(`Name: ${sender.name || 'N/A'}`, margin, y);
+        doc.text(`Name: ${receiver.name || 'N/A'}`, pageWidth / 2 + 10, y); y += 4;
+        doc.text(`Phone: ${sender.phone || 'N/A'}`, margin, y);
+        doc.text(`Phone: ${receiver.phone || 'N/A'}`, pageWidth / 2 + 10, y); y += 4;
+        doc.text(`Designation: ${sender.designation || 'N/A'}`, margin, y);
+        doc.text(`Designation: ${receiver.designation || 'N/A'}`, pageWidth / 2 + 10, y); y += 4;
+        doc.text(`Emp ID: ${sender.employee_id || 'N/A'}`, margin, y);
+        doc.text(`Emp ID: ${receiver.employee_id || 'N/A'}`, pageWidth / 2 + 10, y); y += 4;
+        doc.text(`Department: ${sender.department || 'N/A'}`, margin, y);
+        doc.text(`Department: ${receiver.department || 'N/A'}`, pageWidth / 2 + 10, y); y += 10;
+
+        // Items Table
+        const items = (gatepass.items || []).map((item, i) => [
+          i + 1,
+          item.name || '',
+          item.quantity || '',
+          item.unit || ''
+        ]);
+        while (items.length < 5) {
+          items.push([items.length + 1, '', '', '']);
+        }
+
+        doc.autoTable({
+          head: [['SL NO', 'ITEM DESCRIPTION', 'QUANTITY', 'UNIT']],
+          body: items,
+          startY: y,
+          theme: 'grid',
+          headStyles: { fillColor: [240, 240, 240], textColor: [0,0,0] },
+          styles: { fontSize: 10, cellPadding: 2 }
+        });
+        y = doc.lastAutoTable.finalY + 10;
+
+        // Remarks
+        if (gatepass.remarks) {
+          doc.text("Remarks", margin, y);
+          y += 6;
+          const splitRemarks = doc.splitTextToSize(gatepass.remarks, pageWidth - 2 * margin);
+          doc.text(splitRemarks, margin, y);
+          y += splitRemarks.length * 5 + 10;
+        }
+
+        // Prepared By
+        const pb = gatepass.preparedBy || {};
+        doc.text("Prepared By", margin, y);
+        y += 6;
+        doc.text(`Name: ${pb.name || 'N/A'}`, margin, y); y += 4;
+        doc.text(`Designation: ${pb.designation || 'N/A'}`, margin, y); y += 4;
+        doc.text(`Employee ID: ${pb.employee_id || 'N/A'}`, margin, y); y += 4;
+        doc.text(`Sign: ${(pb.name || '').toLowerCase()}`, margin, y); y += 10;
+
+        // Footer
+        doc.setFontSize(9);
+        doc.text("Daraz Internal B2 DR-COMP-FRM-GPFRM  28 October, 2024  Version 1.1", pageWidth / 2, 287, { align: 'center' });
+
+        doc.save(`GatePass_${gatepass._id || Date.now()}.pdf`);
+      });
+    });
+  </script>
 </body>
 </html>

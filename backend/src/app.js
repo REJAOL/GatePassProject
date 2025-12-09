@@ -17,7 +17,7 @@ app.use(express.static('public'))
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
 
-
+app.use('/gatepass', gatePassRouter)
 app.use('/api/v1/users', userRouter)
 app.use('/api/v1/gatepass', gatePassRouter)
 app.use('/api/v1/addresses', addressRouter)

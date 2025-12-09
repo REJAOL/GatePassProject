@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -122,7 +121,7 @@
             <div class="text-center">
               <a href="/api/v1/gatepass/<%= gatepass._id %>/pdf" class="btn btn-primary btn-lg btn-download shadow-lg" download>Download PDF</a>
               <a href="/api/v1/gatepass" class="btn btn-secondary btn-lg ms-3">Back</a>
-              <!-- Add Edit button later: <a href="/api/v1/gatepass/<%= gatepass._id %>/edit" class="btn btn-warning btn-lg ms-3">Edit</a> -->
+              <!-- For future edit: <a href="/api/v1/gatepass/<%= gatepass._id %>/edit" class="btn btn-warning btn-lg ms-3">Edit</a> -->
             </div>
 
           </div>

@@ -235,47 +235,47 @@ const renderGatePassDetails = async (req, res) => {
 //   }
 // };
 
-const downloadPdf = async (req, res) => {
-  try {
-    const gatepass = await GatePass.findById(req.params.id)
-      .populate('sender receiver dispatchFrom dispatchTo');
+// const downloadPdf = async (req, res) => {
+//   try {
+//     const gatepass = await GatePass.findById(req.params.id)
+//       .populate('sender receiver dispatchFrom dispatchTo');
 
-    if (!gatepass) {
-      return res.status(404).send('Gatepass not found');
-    }
+//     if (!gatepass) {
+//       return res.status(404).send('Gatepass not found');
+//     }
 
-    // Read logo as Base64
-    const logoPath = path.join(process.cwd(), 'public', 'images', 'daraz-logo.png');
-    let logoBase64 = '';
-    if (fs.existsSync(logoPath)) {
-      logoBase64 = fs.readFileSync(logoPath, 'base64');
-    }
+//     // Read logo as Base64
+//     const logoPath = path.join(process.cwd(), 'public', 'images', 'daraz-logo.png');
+//     let logoBase64 = '';
+//     if (fs.existsSync(logoPath)) {
+//       logoBase64 = fs.readFileSync(logoPath, 'base64');
+//     }
 
-    // Render EJS to HTML string
-    const html = await ejs.renderFile(
-      path.join(process.cwd(), 'views', 'gatepass', 'pdf.ejs'),
-      { gatepass, logoBase64 }
-    );
+//     // Render EJS to HTML string
+//     const html = await ejs.renderFile(
+//       path.join(process.cwd(), 'views', 'gatepass', 'pdf.ejs'),
+//       { gatepass, logoBase64 }
+//     );
 
-    // Generate PDF
-    const pdfBuffer = await htmlToPdf.generatePdf(
-      { content: html },
-      {
-        format: 'A4',
-        margin: { top: '10mm', right: '10mm', bottom: '10mm', left: '10mm' }
-      }
-    );
+//     // Generate PDF
+//     const pdfBuffer = await htmlToPdf.generatePdf(
+//       { content: html },
+//       {
+//         format: 'A4',
+//         margin: { top: '10mm', right: '10mm', bottom: '10mm', left: '10mm' }
+//       }
+//     );
 
-    // Send PDF
-    res.set({
-      'Content-Type': 'application/pdf',
-      'Content-Disposition': `attachment; filename=gatepass_${gatepass._id}.pdf`
-    });
-    res.send(pdfBuffer);
-  } catch (err) {
-    console.error('PDF generation failed:', err);
-    res.status(500).send('Failed to generate PDF');
-  }
-};
+//     // Send PDF
+//     res.set({
+//       'Content-Type': 'application/pdf',
+//       'Content-Disposition': `attachment; filename=gatepass_${gatepass._id}.pdf`
+//     });
+//     res.send(pdfBuffer);
+//   } catch (err) {
+//     console.error('PDF generation failed:', err);
+//     res.status(500).send('Failed to generate PDF');
+//   }
+// };
 
 module.exports = {create, getAllGatePass, createGatePass, renderGatePassCreate, renderGatePassDetails, downloadPdf}
