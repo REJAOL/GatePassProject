@@ -278,4 +278,4 @@ const renderGatePassDetails = async (req, res) => {
 //   }
 // };
 
-module.exports = {create, getAllGatePass, createGatePass, renderGatePassCreate, renderGatePassDetails, downloadPdf}
+module.exports = {create, getAllGatePass, createGatePass, renderGatePassCreate, renderGatePassDetails}
