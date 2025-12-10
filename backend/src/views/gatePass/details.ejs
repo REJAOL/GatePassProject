@@ -126,9 +126,7 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  
-  <!-- jsPDF -->
+  <!-- jsPDF Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
@@ -136,102 +134,137 @@
     document.addEventListener('DOMContentLoaded', () => {
       const gatepass = <%- JSON.stringify(gatepass || {}) %>;
 
+      const logoBase64 = "iVBORw0KGgoAAAANSUhEUgAA..."; 
+
       document.getElementById('downloadPdfBtn').addEventListener('click', () => {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF('p', 'mm', 'a4');
-        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageWidth = doc.internal.pageSize.width;
         const margin = 10;
-        let y = 20;
+        let y = 15;
 
-        // Header
-        doc.setFontSize(16);
-        doc.text("Daraz Bangladesh Limited", pageWidth / 2, y, { align: 'center' });
-        y += 10;
+        if (logoBase64) {
+          doc.addImage(`data:image/png;base64,${logoBase64}`, 'PNG', margin, y, 30, 8);
+        }
+
+        const gatePassId = `GATE PASS#: ${gatepass._id ? 'BD-IT' + new Date(gatepass.createdAt).toISOString().replace(/[-T:.]/g, '').slice(0,14) : 'N/A'}`;
         doc.setFontSize(12);
-        doc.text(`GATE PASS#: ${gatepass._id ? 'BD-IT' + new Date(gatepass.createdAt).toISOString().replace(/[-T:.]/g, '').slice(0,14) : 'N/A'}`, pageWidth - margin, 10, { align: 'right' });
-
-        // Dates
-        doc.text(`Dispatch Date: ${gatepass.date ? new Date(gatepass.date).toLocaleDateString('en-GB') : '____/____/____'}`, margin, y);
-        doc.text("Receiving Date: ___________________", pageWidth - 100, y);
-        y += 10;
-
-        doc.text("Challan Type: Internal/External", pageWidth / 2, y, { align: 'center' });
+        doc.text(gatePassId, pageWidth - margin, y + 4, { align: 'right' });
         y += 15;
 
-        // Dispatch From / To
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Daraz Bangladesh Limited', pageWidth / 2, y, { align: 'center' });
+        y += 10;
+
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'normal');
+        const dispatchDate = `Dispatch Date: ${gatepass.date ? new Date(gatepass.date).toLocaleDateString('en-GB') : '____/____/____'}`;
+        doc.text(dispatchDate, margin, y);
+        doc.text('Receiving Date: _____________________', pageWidth - 100, y);
+        y += 10;
+
+        doc.text('Challan Type: Internal/External', pageWidth / 2, y, { align: 'center' });
+        y += 12;
+
+        doc.setFont('helvetica', 'bold');
+        doc.text('Dispatch From', margin, y);
+        doc.text('Dispatch To', pageWidth / 2 + 5, y);
+        y += 6;
+
         const from = gatepass.dispatchFrom || {};
         const to = gatepass.dispatchTo || {};
-        doc.text("Dispatch From", margin, y);
-        doc.text("Dispatch To", pageWidth / 2 + 10, y);
-        y += 6;
-        doc.text(`Name: ${from.hubName || 'N/A'}`, margin, y);
-        doc.text(`Name: ${to.hubName || 'N/A'}`, pageWidth / 2 + 10, y); y += 4;
-        doc.text(`Zone: ${from.hubName || 'N/A'}`, margin, y);
-        doc.text(`Zone: ${to.hubName || 'N/A'}`, pageWidth / 2 + 10, y); y += 4;
-        doc.text(`Address: ${from.details || 'N/A'}`, margin, y);
-        doc.text(`Address: ${to.details || 'N/A'}`, pageWidth / 2 + 10, y); y += 10;
 
-        // Sender / Receiver
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Name: ${from.hubName || 'N/A'}`, margin, y); y += 4;
+        doc.text(`Zone: ${from.hubName || 'N/A'}`, margin, y); y += 4;
+        doc.text(`Address: ${from.details || 'N/A'}`, margin, y); y += 8;
+
+        doc.text(`Name: ${to.hubName || 'N/A'}`, pageWidth / 2 + 5, y - 12);
+        doc.text(`Zone: ${to.hubName || 'N/A'}`, pageWidth / 2 + 5, y - 8);
+        doc.text(`Address: ${to.details || 'N/A'}`, pageWidth / 2 + 5, y - 4);
+        y += 8;
+
+        doc.setFont('helvetica', 'bold');
+        doc.text("Sender's Details", margin, y);
+        doc.text("Receiver's Details", pageWidth / 2 + 5, y);
+        y += 6;
+
+        doc.setFont('helvetica', 'normal');
         const sender = gatepass.sender || {};
         const receiver = gatepass.receiver || {};
-        doc.text("Sender's Details", margin, y);
-        doc.text("Receiver's Details", pageWidth / 2 + 10, y);
-        y += 6;
-        doc.text(`Name: ${sender.name || 'N/A'}`, margin, y);
-        doc.text(`Name: ${receiver.name || 'N/A'}`, pageWidth / 2 + 10, y); y += 4;
-        doc.text(`Phone: ${sender.phone || 'N/A'}`, margin, y);
-        doc.text(`Phone: ${receiver.phone || 'N/A'}`, pageWidth / 2 + 10, y); y += 4;
-        doc.text(`Designation: ${sender.designation || 'N/A'}`, margin, y);
-        doc.text(`Designation: ${receiver.designation || 'N/A'}`, pageWidth / 2 + 10, y); y += 4;
-        doc.text(`Emp ID: ${sender.employee_id || 'N/A'}`, margin, y);
-        doc.text(`Emp ID: ${receiver.employee_id || 'N/A'}`, pageWidth / 2 + 10, y); y += 4;
-        doc.text(`Department: ${sender.department || 'N/A'}`, margin, y);
-        doc.text(`Department: ${receiver.department || 'N/A'}`, pageWidth / 2 + 10, y); y += 10;
 
-        // Items Table
+        doc.text(`Name: ${sender.name || 'N/A'}`, margin, y); y += 4;
+        doc.text(`Phone No: ${sender.phone || 'N/A'}`, margin, y); y += 4;
+        doc.text(`Designation: ${sender.designation || 'N/A'}`, margin, y); y += 4;
+        doc.text(`Employee ID: ${sender.employee_id || 'N/A'}`, margin, y); y += 4;
+        doc.text(`Department: ${sender.department || 'N/A'}`, margin, y); y += 8;
+
+        doc.text(`Name: ${receiver.name || 'N/A'}`, pageWidth / 2 + 5, y - 20);
+        doc.text(`Phone No: ${receiver.phone || 'N/A'}`, pageWidth / 2 + 5, y - 16);
+        doc.text(`Designation: ${receiver.designation || 'N/A'}`, pageWidth / 2 + 5, y - 12);
+        doc.text(`Employee ID: ${receiver.employee_id || 'N/A'}`, pageWidth / 2 + 5, y - 8);
+        doc.text(`Department: ${receiver.department || 'N/A'}`, pageWidth / 2 + 5, y - 4);
+        y += 8;
+
         const items = (gatepass.items || []).map((item, i) => [
           i + 1,
           item.name || '',
           item.quantity || '',
           item.unit || ''
         ]);
-        while (items.length < 5) {
-          items.push([items.length + 1, '', '', '']);
-        }
+
+        while (items.length < 5) items.push([items.length + 1, '', '', '']);
 
         doc.autoTable({
           head: [['SL NO', 'ITEM DESCRIPTION', 'QUANTITY', 'UNIT']],
           body: items,
           startY: y,
           theme: 'grid',
-          headStyles: { fillColor: [240, 240, 240], textColor: [0,0,0] },
-          styles: { fontSize: 10, cellPadding: 2 }
+          headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontSize: 10 },
+          styles: { fontSize: 9, cellPadding: 1.5 }
         });
-        y = doc.lastAutoTable.finalY + 10;
 
-        // Remarks
+        y = doc.lastAutoTable.finalY + 8;
+
+        doc.text('Remarks', margin, y);
+        y += 6;
+
+        doc.setDrawColor(0);
+        doc.rect(margin, y, pageWidth - 2 * margin, 25);
+
         if (gatepass.remarks) {
-          doc.text("Remarks", margin, y);
-          y += 6;
-          const splitRemarks = doc.splitTextToSize(gatepass.remarks, pageWidth - 2 * margin);
-          doc.text(splitRemarks, margin, y);
-          y += splitRemarks.length * 5 + 10;
+          const split = doc.splitTextToSize(gatepass.remarks, pageWidth - 2 * margin - 4);
+          doc.text(split, margin + 2, y + 4);
         }
 
-        // Prepared By
+        y += 30;
+
         const pb = gatepass.preparedBy || {};
-        doc.text("Prepared By", margin, y);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Prepared By', margin, y);
         y += 6;
+
+        doc.setFont('helvetica', 'normal');
         doc.text(`Name: ${pb.name || 'N/A'}`, margin, y); y += 4;
         doc.text(`Designation: ${pb.designation || 'N/A'}`, margin, y); y += 4;
         doc.text(`Employee ID: ${pb.employee_id || 'N/A'}`, margin, y); y += 4;
         doc.text(`Sign: ${(pb.name || '').toLowerCase()}`, margin, y); y += 10;
 
-        // Footer
-        doc.setFontSize(9);
-        doc.text("Daraz Internal B2 DR-COMP-FRM-GPFRM  28 October, 2024  Version 1.1", pageWidth / 2, 287, { align: 'center' });
+        const sigY = y;
 
-        doc.save(`GatePass_${gatepass._id || Date.now()}.pdf`);
+        doc.setFont('helvetica', 'bold');
+        doc.text('PREPARED BY', margin + 30, sigY, { align: 'center' });
+        doc.text('SECURITY CHECK', pageWidth / 2, sigY, { align: 'center' });
+        doc.text('RECEIVED BY', pageWidth - margin - 30, sigY, { align: 'center' });
+
+        doc.setDrawColor(0);
+        doc.rect(margin, sigY + 6, pageWidth - 2 * margin, 15);
+
+        doc.text('BEARER SIGNATURE', margin + (pageWidth - 2 * margin) / 3, sigY + 25, { align: 'center' });
+        doc.text('AUTHORISED SIGNATURE', pageWidth - margin - (pageWidth - 2 * margin) / 3, sigY + 25, { align: 'center' });
+
+        doc.save(`GatePass_${gatepass._id || 'document'}.pdf`);
       });
     });
   </script>
