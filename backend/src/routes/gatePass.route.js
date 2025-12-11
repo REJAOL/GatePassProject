@@ -1,5 +1,6 @@
 const express = require('express')
 const { create, createGatePass, getAllGatePass,renderGatePassCreate,renderGatePassDetails,downloadPdf } = require('../controllers/gatePass.js')
+const { downloadGatepassPdf } = require('../controllers/gatePassController.js')
 const router = express.Router()
 
 
@@ -12,6 +13,8 @@ router.post('/add', createGatePass )
 router.get('/create',renderGatePassCreate)
 router.get('/:id', renderGatePassDetails);
 router.get("/:id/pdf", downloadPdf);
+router.get('/:id/download', downloadGatepassPdf);
+
 // router.get("/:id/pdf", downloadPdf);
 
 // router.get('/:id', async (req, res) => {
