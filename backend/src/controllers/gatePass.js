@@ -6,6 +6,7 @@ const path = require('path')
 const fs = require('fs')
 const ejs = require('ejs')
 const htmlToPdf = require('html-to-pdf');
+const puppeteer = require('puppeteer')
 
 
 
