@@ -1,10 +1,11 @@
 const ejs = require('ejs');
 const path = require('path');
 const puppeteer = require('puppeteer');
+const GatePass = require('../models/GatePass.model');
 
 exports.downloadGatepassPdf = async (req, res) => {
   try {
-    const gatepass = await Gatepass.findById(req.params.id)
+    const gatepass = await GatePass.findById(req.params.id)
       .populate('sender receiver preparedBy dispatchFrom dispatchTo')
       .lean();
 
