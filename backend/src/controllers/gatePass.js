@@ -203,80 +203,6 @@ const renderGatePassDetails = async (req, res) => {
   }
 };
 
-// const downloadPdf = async (req, res) => {
-//   try {
-//     const gatepass = await GatePass.findById(req.params.id)
-//       .populate("sender receiver dispatchFrom dispatchTo");
-
-//     if (!gatepass) return res.status(404).send("Gatepass not found");
-
-//     // Convert logo to Base64
-//     const logoPath = path.join(__dirname, "..","..", "public", "images", "daraz-logo.png");
-//     const logoBase64 = fs.readFileSync(logoPath, "base64");
-
-//     // Render EJS with Base64
-//     const filePath = path.join(__dirname, "..", "views/gatepass/pdf.ejs");
-//     const html = await ejs.renderFile(filePath, { gatepass, logoBase64 });
-
-//     const file = { content: html };
-//     const options = {
-//       format: "A4",
-//       margin: { top: "10mm", right: "10mm", bottom: "10mm", left: "10mm" },
-//     };
-
-//     const pdfBuffer = await htmlToPdf.generatePdf(file, options);
-
-//     res.set("Content-Type", "application/pdf");
-//     res.set("Content-Disposition", `attachment; filename="gatepass_${gatepass._id}.pdf"`);
-//     res.send(pdfBuffer);
-//   } catch (err) {
-//     console.error('pdf generation failed', err)
-//     res.status(500).send(err.message);
-//   }
-// };
-
-// const downloadPdf = async (req, res) => {
-//   try {
-//     const gatepass = await GatePass.findById(req.params.id)
-//       .populate('sender receiver dispatchFrom dispatchTo');
-
-//     if (!gatepass) {
-//       return res.status(404).send('Gatepass not found');
-//     }
-
-//     // Read logo as Base64
-//     const logoPath = path.join(process.cwd(), 'public', 'images', 'daraz-logo.png');
-//     let logoBase64 = '';
-//     if (fs.existsSync(logoPath)) {
-//       logoBase64 = fs.readFileSync(logoPath, 'base64');
-//     }
-
-//     // Render EJS to HTML string
-//     const html = await ejs.renderFile(
-//       path.join(process.cwd(), 'views', 'gatepass', 'pdf.ejs'),
-//       { gatepass, logoBase64 }
-//     );
-
-//     // Generate PDF
-//     const pdfBuffer = await htmlToPdf.generatePdf(
-//       { content: html },
-//       {
-//         format: 'A4',
-//         margin: { top: '10mm', right: '10mm', bottom: '10mm', left: '10mm' }
-//       }
-//     );
-
-//     // Send PDF
-//     res.set({
-//       'Content-Type': 'application/pdf',
-//       'Content-Disposition': `attachment; filename=gatepass_${gatepass._id}.pdf`
-//     });
-//     res.send(pdfBuffer);
-//   } catch (err) {
-//     console.error('PDF generation failed:', err);
-//     res.status(500).send('Failed to generate PDF');
-//   }
-// };
 const downloadPdf = async (req, res) => {
   try {
     const gatepass = await GatePass.findById(req.params.id)
@@ -285,28 +211,17 @@ const downloadPdf = async (req, res) => {
 
     if (!gatepass) return res.status(404).send('Gate pass not found');
 
-    // Public logo URL (no Base64 needed)
-    const logoUrl = 'https://i.ibb.co.com/Df3S8Zhx/daraz-logo.png';
-
-    // Render EJS to HTML string
+    // Render HTML
     const html = await ejs.renderFile(
-      path.join(__dirname, '..', 'views', 'gatePass', 'pdf-template.ejs'),
-      { gatepass, logoUrl }
+      path.join(__dirname, '..', 'views', 'gatePass', 'pdf.ejs'),
+      { gatepass }
     );
 
-    // Launch Puppeteer
-    const browser = await puppeteer.launch({
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
+    // Generate PDF
+    const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0' });
-    
-    const pdfBuffer = await page.pdf({
-      format: 'A4',
-      printBackground: true,
-      margin: { top: '10mm', right: '10mm', bottom: '10mm', left: '10mm' }
-    });
-
+    const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
     await browser.close();
 
     res.set({
@@ -316,7 +231,7 @@ const downloadPdf = async (req, res) => {
     res.send(pdfBuffer);
 
   } catch (err) {
-    console.error('PDF generation failed:', err);
+    console.error('PDF Error:', err);
     res.status(500).send('Failed to generate PDF');
   }
 };
