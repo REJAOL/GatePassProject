@@ -211,17 +211,32 @@ const downloadPdf = async (req, res) => {
 
     if (!gatepass) return res.status(404).send('Gate pass not found');
 
-    // Render HTML
     const html = await ejs.renderFile(
       path.join(__dirname, '..', 'views', 'gatePass', 'pdf.ejs'),
       { gatepass }
     );
 
-    // Generate PDF
-    const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    // Launch Puppeteer with Render-compatible args
+    const browser = await puppeteer.launch({
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--single-process'
+      ],
+      executablePath: process.env.CHROME_PATH || '/usr/bin/chromium-browser'
+    });
+
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0' });
-    const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
+    
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: { top: '10mm', right: '10mm', bottom: '10mm', left: '10mm' }
+    });
+
     await browser.close();
 
     res.set({
@@ -232,7 +247,7 @@ const downloadPdf = async (req, res) => {
 
   } catch (err) {
     console.error('PDF Error:', err);
-    res.status(500).send('Failed to generate PDF');
+    res.status(500).send('PDF generation failed: ' + err.message);
   }
 };
 
