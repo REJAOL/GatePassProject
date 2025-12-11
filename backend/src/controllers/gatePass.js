@@ -5,7 +5,6 @@ const Sender = require("../models/Sender.model.js");
 const path = require('path')
 const fs = require('fs')
 const ejs = require('ejs')
-// const htmlToPdf = require('html-pdf-node')
 const htmlToPdf = require('html-to-pdf');
 
 
@@ -277,5 +276,49 @@ const renderGatePassDetails = async (req, res) => {
 //     res.status(500).send('Failed to generate PDF');
 //   }
 // };
+const downloadPdf = async (req, res) => {
+  try {
+    const gatepass = await GatePass.findById(req.params.id)
+      .populate('sender receiver dispatchFrom dispatchTo')
+      .lean();
 
-module.exports = {create, getAllGatePass, createGatePass, renderGatePassCreate, renderGatePassDetails}
+    if (!gatepass) return res.status(404).send('Gate pass not found');
+
+    // Public logo URL (no Base64 needed)
+    const logoUrl = 'https://i.ibb.co.com/Df3S8Zhx/daraz-logo.png';
+
+    // Render EJS to HTML string
+    const html = await ejs.renderFile(
+      path.join(__dirname, '..', 'views', 'gatePass', 'pdf-template.ejs'),
+      { gatepass, logoUrl }
+    );
+
+    // Launch Puppeteer
+    const browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: 'networkidle0' });
+    
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: { top: '10mm', right: '10mm', bottom: '10mm', left: '10mm' }
+    });
+
+    await browser.close();
+
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename=gatepass_${gatepass._id}.pdf`
+    });
+    res.send(pdfBuffer);
+
+  } catch (err) {
+    console.error('PDF generation failed:', err);
+    res.status(500).send('Failed to generate PDF');
+  }
+};
+
+
+module.exports = {create, getAllGatePass, createGatePass, renderGatePassCreate, renderGatePassDetails, downloadPdf}
